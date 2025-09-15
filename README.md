@@ -2,13 +2,13 @@
 
 ## 概要
 
-OpenSearch の マッピング定義（mapping） と Bulk NDJSONを受け取り、新たなマッピングが自動生成されてしまう可能性（= 未知フィールドのインデクシング） を事前に検出する CLI ツールです。
+OpenSearch の マッピング定義（mapping） と バルクリクエスト(NDJSON)を受け取り、新たなマッピングが自動生成されてしまう可能性（= 未知フィールドのインデクシング） を事前に検出する CLI ツールです。
 
 ## 機能
 
 
 バルク更新（NDJSON）に含まれるドキュメントと既存 mappingを突合し、以下を検出します：
-- nknown fields：mapping 上に存在しないフィールド（パス）。
+- unknown fields：mapping 上に存在しないフィールド（パス）。
 - dynamic: false/strict な領域では エラー になりうる対象。
 - dynamic: true な領域では 新規マッピングが生成される候補 として 警告。
 
