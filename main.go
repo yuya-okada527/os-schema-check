@@ -1,7 +1,17 @@
 package main
 
-import "fmt"
+import (
+    "fmt"
+    "os"
+    "strings"
+)
 
 func main() {
-    fmt.Println("Hello, World!")
+    args := os.Args[1:]
+    if len(args) == 0 {
+        fmt.Println("Hello, World!")
+        return
+    }
+
+    fmt.Println(strings.Join(args, " "))
 }
