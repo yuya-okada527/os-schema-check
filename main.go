@@ -1,6 +1,7 @@
 package main
 
 import (
+    "encoding/json"
     "fmt"
     "os"
     "strings"
@@ -19,13 +20,27 @@ func main() {
         os.Exit(1)
     }
 
-    if _, err := os.Stat(path); err == nil {
-        fmt.Println("File exists")
-    } else if os.IsNotExist(err) {
-        fmt.Println("File does not exist")
-        os.Exit(1)
-    } else {
+    if _, err := os.Stat(path); err != nil {
+        if os.IsNotExist(err) {
+            fmt.Println("File does not exist")
+            os.Exit(1)
+        }
+
         fmt.Printf("Error checking path: %v\n", err)
         os.Exit(1)
     }
+
+    content, err := os.ReadFile(path)
+    if err != nil {
+        fmt.Printf("Error reading file: %v\n", err)
+        os.Exit(1)
+    }
+
+    var data map[string]interface{}
+    if err := json.Unmarshal(content, &data); err != nil {
+        fmt.Printf("Error parsing JSON: %v\n", err)
+        os.Exit(1)
+    }
+
+    fmt.Printf("Parsed JSON: %v\n", data)
 }
