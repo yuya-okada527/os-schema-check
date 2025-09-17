@@ -7,6 +7,18 @@ import (
     "strings"
 )
 
+type Property struct {
+    Type string `json:"type"`
+}
+
+type Mappings struct {
+    Properties map[string]Property `json:"properties"`
+}
+
+type Schema struct {
+    Mappings Mappings `json:"mappings"`
+}
+
 func main() {
     args := os.Args[1:]
     if len(args) == 0 {
@@ -36,11 +48,11 @@ func main() {
         os.Exit(1)
     }
 
-    var data map[string]interface{}
-    if err := json.Unmarshal(content, &data); err != nil {
+    var schema Schema
+    if err := json.Unmarshal(content, &schema); err != nil {
         fmt.Printf("Error parsing JSON: %v\n", err)
         os.Exit(1)
     }
 
-    fmt.Printf("Parsed JSON: %v\n", data)
+    fmt.Printf("Parsed JSON: %+v\n", schema)
 }
