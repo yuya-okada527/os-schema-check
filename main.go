@@ -55,4 +55,19 @@ func main() {
     }
 
     fmt.Printf("Parsed JSON: %+v\n", schema)
+
+    if len(args) > 1 {
+        dataPath := args[1]
+        if _, err := os.Stat(dataPath); err != nil {
+            if os.IsNotExist(err) {
+                fmt.Println("Second file does not exist")
+                os.Exit(1)
+            }
+
+            fmt.Printf("Error checking second path: %v\n", err)
+            os.Exit(1)
+        }
+
+        fmt.Println("Second file exists")
+    }
 }

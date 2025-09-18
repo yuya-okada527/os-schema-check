@@ -2,9 +2,9 @@
 {
   "mappings": {
     "properties": {
-      "year":    { "type" : "text" },
-      "age":     { "type" : "integer" },
-      "director":{ "type" : "text" }
+      "year":    { "type" : "keyword" },
+      "title":   { "type" : "keyword" },
+      "director":{ "type" : "keyword" }
     }
   }
 }
