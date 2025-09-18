@@ -21,18 +21,18 @@ type Schema struct {
 
 func main() {
     args := os.Args[1:]
-    if len(args) == 0 {
-        fmt.Println("Hello, World!")
-        return
+    if len(args) != 2 {
+        fmt.Println("Usage: go run main.go <schema.json> <data file>")
+        os.Exit(1)
     }
 
-    path := args[0]
-    if !strings.HasSuffix(path, ".json") {
+    schemaPath := args[0]
+    if !strings.HasSuffix(schemaPath, ".json") {
         fmt.Println("Error: file must have .json extension")
         os.Exit(1)
     }
 
-    if _, err := os.Stat(path); err != nil {
+    if _, err := os.Stat(schemaPath); err != nil {
         if os.IsNotExist(err) {
             fmt.Println("File does not exist")
             os.Exit(1)
@@ -42,7 +42,7 @@ func main() {
         os.Exit(1)
     }
 
-    content, err := os.ReadFile(path)
+    content, err := os.ReadFile(schemaPath)
     if err != nil {
         fmt.Printf("Error reading file: %v\n", err)
         os.Exit(1)
@@ -56,18 +56,16 @@ func main() {
 
     fmt.Printf("Parsed JSON: %+v\n", schema)
 
-    if len(args) > 1 {
-        dataPath := args[1]
-        if _, err := os.Stat(dataPath); err != nil {
-            if os.IsNotExist(err) {
-                fmt.Println("Second file does not exist")
-                os.Exit(1)
-            }
-
-            fmt.Printf("Error checking second path: %v\n", err)
+    dataPath := args[1]
+    if _, err := os.Stat(dataPath); err != nil {
+        if os.IsNotExist(err) {
+            fmt.Println("Second file does not exist")
             os.Exit(1)
         }
 
-        fmt.Println("Second file exists")
+        fmt.Printf("Error checking second path: %v\n", err)
+        os.Exit(1)
     }
+
+    fmt.Println("Second file exists")
 }
