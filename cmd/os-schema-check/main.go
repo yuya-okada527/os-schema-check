@@ -5,19 +5,8 @@ import (
     "fmt"
     "os"
     "os-schema-check/internal/fileutil"
+    "os-schema-check/internal/schema"
 )
-
-type Property struct {
-    Type string `json:"type"`
-}
-
-type Mappings struct {
-    Properties map[string]Property `json:"properties"`
-}
-
-type Schema struct {
-    Mappings Mappings `json:"mappings"`
-}
 
 func main() {
     args := os.Args[1:]
@@ -43,7 +32,7 @@ func main() {
         os.Exit(1)
     }
 
-    var schema Schema
+    var schema schema.Schema
     if err := json.Unmarshal(content, &schema); err != nil {
         fmt.Printf("Error parsing JSON: %v\n", err)
         os.Exit(1)
