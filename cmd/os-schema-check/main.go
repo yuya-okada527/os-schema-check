@@ -14,6 +14,7 @@ func main() {
         os.Exit(1)
     }
 
+    // Load and parse OpenSearch Index Schema Settings
     schemaPath := args[0]
     schema, err := schema.Load(schemaPath)
     if err != nil {
