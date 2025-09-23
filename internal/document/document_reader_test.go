@@ -43,6 +43,28 @@ func TestDocumentReader_Next(t *testing.T) {
 	}
 }
 
+func TestNewDocumentReader_InvalidExtension(t *testing.T) {
+	dir := t.TempDir()
+	path := filepath.Join(dir, "data.json")
+
+	contents := "{\"name\":\"Alice\"}\n"
+	if err := os.WriteFile(path, []byte(contents), 0o644); err != nil {
+		t.Fatalf("failed to write temp file: %v", err)
+	}
+
+	if _, err := NewDocumentReader(path); err == nil {
+		t.Fatalf("expected extension validation error")
+	}
+}
+
+func TestNewDocumentReader_FileUnavailable(t *testing.T) {
+	path := filepath.Join(t.TempDir(), "missing.jsonl")
+
+	if _, err := NewDocumentReader(path); err == nil {
+		t.Fatalf("expected file availability error")
+	}
+}
+
 func TestReader_InvalidJSON(t *testing.T) {
 	dir := t.TempDir()
 	path := filepath.Join(dir, "data.jsonl")

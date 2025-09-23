@@ -5,6 +5,8 @@ import (
 	"encoding/json"
 	"fmt"
 	"os"
+
+	"os-schema-check/internal/fileutil"
 )
 
 // DocumentReader provides iterator-style access to newline-delimited JSON documents.
@@ -17,6 +19,12 @@ type DocumentReader struct {
 
 // NewDocumentReader opens the given path and prepares a DocumentReader.
 func NewDocumentReader(path string) (*DocumentReader, error) {
+	if !fileutil.CheckExtension(path, ".jsonl") && !fileutil.CheckExtension(path, ".ndjson") {
+		return nil, fmt.Errorf("file must have .jsonl or .ndjson extension")
+	}
+	if !fileutil.IsAvailable(path) {
+		return nil, fmt.Errorf("file does not exist: %s", path)
+	}
 	f, err := os.Open(path)
 	if err != nil {
 		return nil, fmt.Errorf("open data file: %w", err)
