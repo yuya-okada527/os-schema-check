@@ -1,7 +1,6 @@
 package main
 
 import (
-    "encoding/json"
     "fmt"
     "os"
     "os-schema-check/internal/fileutil"
@@ -16,25 +15,9 @@ func main() {
     }
 
     schemaPath := args[0]
-    if !fileutil.CheckExtension(schemaPath, ".json") {
-        fmt.Println("Error: file must have .json extension")
-        os.Exit(1)
-    }
-
-    if !fileutil.IsAvailable(schemaPath) {
-        fmt.Printf("Error checking path: %v\n", schemaPath)
-        os.Exit(1)
-    }
-
-    content, err := os.ReadFile(schemaPath)
+    schema, err := schema.Load(schemaPath)
     if err != nil {
-        fmt.Printf("Error reading file: %v\n", err)
-        os.Exit(1)
-    }
-
-    var schema schema.Schema
-    if err := json.Unmarshal(content, &schema); err != nil {
-        fmt.Printf("Error parsing JSON: %v\n", err)
+        fmt.Printf("Error loading schema: %v\n", err)
         os.Exit(1)
     }
 
