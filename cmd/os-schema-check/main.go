@@ -5,6 +5,7 @@ import (
 	"os"
 	"os-schema-check/internal/document"
 	"os-schema-check/internal/schema"
+	"os-schema-check/internal/validator"
 )
 
 func main() {
@@ -33,13 +34,30 @@ func main() {
 	}
 	defer reader.Close()
 
-    // TODO: Validate each document against the schema
+	invalid := false
+	docIndex := 0
+
 	for reader.Next() {
-		fmt.Printf("Document: %+v\n", reader.Current())
+		docIndex++
+		doc := reader.Current()
+		result := validator.Validate(schema, doc)
+		if !result.Valid {
+			invalid = true
+			fmt.Printf("Document %d is invalid:\n", docIndex)
+			for _, issue := range result.Issues {
+				fmt.Printf("  - %s: %s\n", issue.Field, issue.Message)
+			}
+			continue
+		}
+		fmt.Printf("Document %d is valid\n", docIndex)
 	}
 
 	if err := reader.Err(); err != nil {
 		fmt.Printf("Error reading data file: %v\n", err)
+		os.Exit(1)
+	}
+
+	if invalid {
 		os.Exit(1)
 	}
 }
