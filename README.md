@@ -2,78 +2,47 @@
 
 ## 概要
 
-OpenSearch の マッピング定義（mapping） と バルクリクエスト(NDJSON)を受け取り、新たなマッピングが自動生成されてしまう可能性（= 未知フィールドのインデクシング） を事前に検出する CLI ツールです。
+OpenSearch のインデックス設定 (`schema.json`) とバルクリクエスト (`*.jsonl` / `*.ndjson`) を読み込み、既存の `mappings.properties` に存在しないフィールドを検出するシンプルな CLI ツールです。未知フィールドを含むドキュメントはエラーとして扱われ、プロセスは非ゼロ終了コードになります。
 
-## 機能
+## 前提
 
-
-バルク更新（NDJSON）に含まれるドキュメントと既存 mappingを突合し、以下を検出します：
-- unknown fields：mapping 上に存在しないフィールド（パス）。
-- dynamic: false/strict な領域では エラー になりうる対象。
-- dynamic: true な領域では 新規マッピングが生成される候補 として 警告。
+- Go (モジュール対応、`go run` が利用できるバージョン)
+- スキーマファイルは `.json`、バルクデータは `.jsonl` もしくは `.ndjson` 拡張子であること
 
 ## 使い方
 
-CLI
+### 実行方法
 
 ```bash
-os-schema-check validate \
-  --mapping ./mappings/product.json \
-  --bulk ./bulk/products.ndjson \
+go run ./cmd/os-schema-check <schema.json> <bulk.jsonl>
 ```
 
-オプション
-- --mapping (required): mapping JSON ファイルパス
-- --bulk (required): Bulk NDJSON ファイルパス（action/doc の 2 行ペア形式）
+- 引数1: OpenSearch インデックス設定を含む JSON ファイルパス
+- 引数2: Bulk API 形式 (1 行 action + 1 行 document の繰り返し) の NDJSON ファイルパス
 
-## 使用例
 
-1) mapping（例）: mappings/product.json
+### 例
 
-```json
-{
-  "mappings": {
-    "dynamic": "true",
-    "properties": {
-      "id": {"type": "keyword"},
-      "title": {"type": "text"},
-      "attrs": {
-        "type": "object",
-        "dynamic": false,
-        "properties": {
-          "color": {"type": "keyword"}
-        }
-      }
-    }
-  }
-}
-```
+リポジトリには動作確認用のサンプルファイルが [sample/](sample) にあります。
 
-2) bulk（例）: bulk/products.ndjson
-
-```json
-{"index":{"_index":"products","_id":"SKU-001"}}
-{"id":"SKU-001","title":"Sample","attrs":{"color":"black","size":"M"}}
-{"update":{"_index":"products","_id":"SKU-002"}}
-{"doc":{"attrs":{"color":"white"}}}
-```
-
-3) 実行
-
-os-schema-check validate \
-  --mapping ./mappings/product.json \
-  --bulk ./bulk/products.ndjson
-
-出力（text例）
+サンプルに含まれるファイルで実行する場合:
 
 ```bash
-[W] line 2  id=SKU-001  field=attrs.size  unknown in mapping (dynamic:true): example="M"
----
-Summary: errors=0, warnings=1, docs=2
-Would create new mappings under: attrs.size
-⸻
+go run ./cmd/os-schema-check sample/schema.json sample/bulk_ok.jsonl
 ```
 
-## 技術要素
+出力例:
 
-- 言語: Go
+```
+Parsed JSON: {Mappings:{Properties:map[date:{Type:keyword} director:{Type:keyword} title:{Type:keyword}]}}
+Document 1 is valid
+Document 2 is invalid:
+  - actors: unexpected field
+```
+
+未知フィールドが検出されると終了コード 1 で終了します。すべてのドキュメントが許可されたプロパティのみで構成されている場合は 0 で終了します。
+
+## TODO
+
+- object/nested タイプのサポート
+- dynamic_templates のサポート
