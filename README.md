@@ -23,6 +23,8 @@ go run ./cmd/os-schema-check <schema.json> <bulk.jsonl>
 
 ### 例
 
+リポジトリには動作確認用のサンプルファイルが [sample/](sample) にあります。
+
 サンプルに含まれるファイルで実行する場合:
 
 ```bash
@@ -44,4 +46,3 @@ Document 2 is invalid:
 
 - スキーマは `mappings.properties` に定義されたトップレベルフィールドのみを許可対象として解析します。
   - ネストされたフィールドの対応は未実装です。
-
