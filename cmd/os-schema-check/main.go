@@ -33,6 +33,7 @@ func main() {
 	}
 	defer reader.Close()
 
+    // TODO: Validate each document against the schema
 	for reader.Next() {
 		fmt.Printf("Document: %+v\n", reader.Current())
 	}
