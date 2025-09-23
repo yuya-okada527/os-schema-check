@@ -56,8 +56,8 @@ func (r *DocumentReader) Next() bool {
 			return false
 		}
 
-		if isBulkActionLine(item) {
-			expectDocument = true
+		if isAction, needsDocument := parseBulkActionLine(item); isAction {
+			expectDocument = needsDocument
 			continue
 		}
 
@@ -87,19 +87,19 @@ func (r *DocumentReader) Close() error {
 	return err
 }
 
-func isBulkActionLine(item map[string]any) bool {
+func parseBulkActionLine(item map[string]any) (isAction bool, needsDocument bool) {
 	if len(item) != 1 {
-		return false
+		return false, false
 	}
 
 	for key, value := range item {
 		switch key {
 		case "index", "create", "update", "delete":
 			if _, ok := value.(map[string]any); ok {
-				return true
+				return true, key != "delete"
 			}
 		}
 	}
 
-	return false
+	return false, false
 }
