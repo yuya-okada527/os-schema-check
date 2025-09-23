@@ -1,2 +1,4 @@
 { "index": { "_index": "movies", "_id": "tt1979320" } }
-{ "year": "1995-09-22", "director": "David Fincher", "title": "Seven"}
+{ "date": "1995-09-22", "director": "David Fincher", "title": "Seven"}
+{ "index": { "_index": "movies", "_id": "tt1979322" } }
+{ "actors": ["Edward Norton", "Brad Pitt"], "date": "1999-10-06", "director": "David Fincher", "title": "Fight Club"}

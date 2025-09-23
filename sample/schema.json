@@ -2,7 +2,7 @@
 {
   "mappings": {
     "properties": {
-      "year":    { "type" : "keyword" },
+      "date":    { "type" : "keyword" },
       "title":   { "type" : "keyword" },
       "director":{ "type" : "keyword" }
     }
