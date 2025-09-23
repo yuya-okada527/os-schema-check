@@ -4,7 +4,7 @@ import (
     "encoding/json"
     "fmt"
     "os"
-    "strings"
+    "os-schema-check/internal/fileutil"
 )
 
 type Property struct {
@@ -27,18 +27,13 @@ func main() {
     }
 
     schemaPath := args[0]
-    if !strings.HasSuffix(schemaPath, ".json") {
+    if !fileutil.CheckExtension(schemaPath, ".json") {
         fmt.Println("Error: file must have .json extension")
         os.Exit(1)
     }
 
-    if _, err := os.Stat(schemaPath); err != nil {
-        if os.IsNotExist(err) {
-            fmt.Println("File does not exist")
-            os.Exit(1)
-        }
-
-        fmt.Printf("Error checking path: %v\n", err)
+    if !fileutil.IsAvailable(schemaPath) {
+        fmt.Printf("Error checking path: %v\n", schemaPath)
         os.Exit(1)
     }
 
@@ -57,13 +52,8 @@ func main() {
     fmt.Printf("Parsed JSON: %+v\n", schema)
 
     dataPath := args[1]
-    if _, err := os.Stat(dataPath); err != nil {
-        if os.IsNotExist(err) {
-            fmt.Println("Second file does not exist")
-            os.Exit(1)
-        }
-
-        fmt.Printf("Error checking second path: %v\n", err)
+    if !fileutil.IsAvailable(dataPath) {
+        fmt.Printf("Error checking second path: %v\n", dataPath)
         os.Exit(1)
     }
 
